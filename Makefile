@@ -1,4 +1,4 @@
-.PHONY: all build install
+.PHONY: all build install clean uninstall
 
 all: build
 
@@ -13,3 +13,6 @@ install: build
 
 clean:
 	cargo clean
+
+uninstall:
+	rm -rf ~/.tmux/plugins/tmux-wax/

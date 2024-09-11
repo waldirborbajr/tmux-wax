@@ -2,7 +2,6 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Default update frequency in seconds
 default_frequency=15
 
 get_tmux_option() {
@@ -23,30 +22,44 @@ set_tmux_option() {
 }
 
 print_random_number() {
-  local random_number=$($CURRENT_DIR/bin/tmux-wax)
-  echo "WAX: $random_number"
+  $CURRENT_DIR/bin/tmux-wax
 }
 
-update_random_number() {
+update_frequency() {
   local frequency=$(get_tmux_option "@wax_frequency" "$default_frequency")
   tmux set-option -g status-interval "$frequency"
 }
 
-# Main function for standalone use
-main() {
-  update_random_number
+print_module() {
+  local icon="$(get_tmux_option "@catppuccin_tmux_wax_icon" "")"
+  local color="$(get_tmux_option "@catppuccin_tmux_wax_color" "cyan")"
+  local text="$(print_random_number)"
 
-  local color=$(get_tmux_option "@wax_color" "cyan")
-  local format_string="#[fg=$color]#(${CURRENT_DIR}/tmux-wax.tmux print)#[default]"
+  local module=""
+  module+="#[fg=$color]"
+  if [[ -n "$icon" ]]; then
+    module+="${icon} "
+  fi
+  module+="WAX: $text"
+  module+="#[default]"
+
+  echo "$module"
+}
+
+main() {
+  update_frequency
+
+  local format_string="#(${CURRENT_DIR}/tmux-wax.tmux print_module)"
 
   local current_status_right=$(get_tmux_option "status-right")
   tmux set-option -gq "status-right" "$format_string $current_status_right"
 }
 
-# Check if the script is being sourced or run directly
+update_frequency
+
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  if [[ "$1" == "print" ]]; then
-    print_random_number
+  if [[ "$1" == "print_module" ]]; then
+    print_module
   else
     main
   fi
