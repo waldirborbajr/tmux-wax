@@ -2,7 +2,6 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Default update frequency in seconds
 default_frequency=15
 
 get_tmux_option() {
@@ -22,20 +21,46 @@ set_tmux_option() {
   tmux set-option -gq "$option" "$value"
 }
 
-update_random_number() {
+print_random_number() {
+  $CURRENT_DIR/bin/tmux-wax
+}
+
+update_frequency() {
   local frequency=$(get_tmux_option "@wax_frequency" "$default_frequency")
   tmux set-option -g status-interval "$frequency"
+}
 
-  local color=$(get_tmux_option "@wax_color" "cyan")
-  local random_number="#($CURRENT_DIR/bin/tmux-wax)"
-  local format_string="#[fg=$color]WAX: $random_number#[default]"
+print_module() {
+  local icon="$(get_tmux_option "@catppuccin_tmux_wax_icon" "")"
+  local color="$(get_tmux_option "@catppuccin_tmux_wax_color" "cyan")"
+  local text="$(print_random_number)"
+
+  local module=""
+  module+="#[fg=$color]"
+  if [[ -n "$icon" ]]; then
+    module+="${icon} "
+  fi
+  module+="WAX: $text"
+  module+="#[default]"
+
+  echo "$module"
+}
+
+main() {
+  update_frequency
+
+  local format_string="#(${CURRENT_DIR}/tmux-wax.tmux print_module)"
 
   local current_status_right=$(get_tmux_option "status-right")
   tmux set-option -gq "status-right" "$format_string $current_status_right"
 }
 
-main() {
-  update_random_number
-}
+update_frequency
 
-main
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  if [[ "$1" == "print_module" ]]; then
+    print_module
+  else
+    main
+  fi
+fi
