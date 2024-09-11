@@ -26,14 +26,15 @@ update_random_number() {
   local frequency=$(get_tmux_option "@wax_frequency" "$default_frequency")
   tmux set-option -g status-interval "$frequency"
 
-  local format_string="#[fg=#{@wax_color}]WAX: %random_number#[default]"
-  tmux set-option -gq "status-right" "#($CURRENT_DIR/bin/tmux-wax '$format_string')$(get_tmux_option status-right)"
+  local color=$(get_tmux_option "@wax_color" "cyan")
+  local random_number="#($CURRENT_DIR/bin/tmux-wax)"
+  local format_string="#[fg=$color]WAX: $random_number#[default]"
+
+  local current_status_right=$(get_tmux_option "status-right")
+  tmux set-option -gq "status-right" "$format_string $current_status_right"
 }
 
 main() {
-  local color=$(get_tmux_option "@wax_color" "cyan")
-  set_tmux_option "@wax_color" "$color"
-
   update_random_number
 }
 
