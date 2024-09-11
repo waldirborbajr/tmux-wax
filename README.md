@@ -48,6 +48,26 @@ set -g @wax_frequency 30
 set -g @wax_color "blue"
 ```
 
+## Using with Catppuccin
+
+To use tmux-wax as a Catppuccin module, add it to your Catppuccin configuration in `~/.tmux.conf`:
+
+```
+set -g @catppuccin_status_modules_right "... tmux-wax ..."
+```
+
+You can customize the Catppuccin integration with these options:
+
+- `@catppuccin_tmux_wax_icon`: Set a custom icon for the module (default: "")
+- `@catppuccin_tmux_wax_color`: Set the color for the module (default: cyan)
+
+Example:
+
+```
+set -g @catppuccin_tmux_wax_icon "🎲"
+set -g @catppuccin_tmux_wax_color "blue"
+```
+
 ## Building
 
 To build the Rust binary, navigate to the plugin directory and run:
@@ -58,4 +78,4 @@ cargo build --release
 
 ## Compatibility
 
-This plugin is compatible with Catppuccin tmux theme.
+This plugin is compatible with Catppuccin tmux theme and can be used as a Catppuccin module.
