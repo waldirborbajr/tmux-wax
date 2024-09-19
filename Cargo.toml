@@ -2,9 +2,18 @@
 name = "tmux-wax"
 version = "0.1.0"
 edition = "2021"
+authors = ["Waldir Borba Junior <wborbajr@gmail.com>"]
+description = "A Rust CLI that connects to a remote server via SSH and retrieves Docker container statistics"
 
 [dependencies]
-rand = "0.8.5"
+structopt = "0.3"
+ssh2 = { version = "0.9", features = ["vendored-openssl"] }
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5"
+anyhow = "1.0"
+log = "0.4"
+env_logger = "0.9"
+
 
 # [profile.release]
 # opt-level = "z"        # Optimize for binary size
@@ -29,7 +38,8 @@ opt-level = 3
 codegen-units = 1
 
 [features]
-default = ["std"]
+default = ["std", "ssh2/vendored-openssl"]
+
 std = []
 # nightly = ["unstable"]
 

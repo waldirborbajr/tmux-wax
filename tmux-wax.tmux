@@ -22,7 +22,7 @@ set_tmux_option() {
 }
 
 print_random_number() {
-  $CURRENT_DIR/bin/tmux-wax
+  $CURRENT_DIR/bin/tmux-wax --tmux
 }
 
 update_frequency() {
