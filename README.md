@@ -1,5 +1,9 @@
 # TMUX-WAX
 
+<p align="center">
+  <img width="256" height="256" src="https://github.com/user-attachments/assets/0c390b7e-1b04-4ece-bebe-2adddaa98875" />
+</p>
+
 TMUX-WAX is a Rust CLI application that connects to a remote server using SSH and retrieves Docker container statistics. It can display the results in a TMUX status bar or at the command prompt.
 
 ## Features
