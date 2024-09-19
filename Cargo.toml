@@ -5,3 +5,39 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.5"
+
+# [profile.release]
+# opt-level = "z"        # Optimize for binary size
+# lto = "fat"            # Link Time Optimization for performance
+# codegen-units = 1      # Single codegen unit for better optimization
+# panic = "abort"        # Avoid extra code for unwinding
+# strip = "symbols"      # Strip debug symbols to reduce binary size
+# overflow-checks = true # Enable runtime overflow checks for security
+# debug = false          # Disable debugging info in release builds
+
+# Use the highest optimization level for release builds
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# Enable link-time optimization for dependencies
+[profile.release.package."*"]
+opt-level = 3
+codegen-units = 1
+
+[features]
+default = ["std"]
+std = []
+# nightly = ["unstable"]
+
+[build]
+rustflags = ["-C", "target-cpu=native", "-Z", "unstable-options"]
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.cargo-audit]
+ignore = [] # No security vulnerabilities to ignore
