@@ -1,54 +1,72 @@
-# tmux-wax
+# TMUX-WAX
 
-A tmux plugin that displays a random number in your status bar, written in Rust.
+TMUX-WAX is a Rust CLI application that connects to a remote server using SSH and retrieves Docker container statistics. It can display the results in a TMUX status bar or at the command prompt.
+
+## Features
+
+- Secure SSH connection to remote server
+- Retrieval of Docker container statistics
+- Display of total containers, running containers, stopped containers, and failed containers
+- Output formatting for TMUX status bar or command prompt
 
 ## Installation
 
-### Using TPM (recommended)
-
-Add the following line to your `~/.tmux.conf`:
-
-```
-set -g @plugin 'yourusername/tmux-wax'
-```
-
-Press `prefix + I` to fetch and install the plugin.
+1. Ensure you have Rust and Cargo installed on your system.
+2. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/tmux-wax.git
+   ```
+3. Navigate to the project directory:
+   ```
+   cd tmux-wax
+   ```
+4. Build the project:
+   ```
+   cargo build --release
+   ```
+5. The binary will be available at `target/release/tmux-wax`
 
 ## Configuration
 
-Add these lines to your `~/.tmux.conf`:
+Create a `.tmux-wax-env` file in your home directory with the following content:
 
-```
-# tmux-wax settings
-set -g @wax_frequency 5  # Update every 5 seconds (adjust as needed)
-set -g @catppuccin_tmux_wax_icon "🎲"
-set -g @catppuccin_tmux_wax_color "blue"
-
-# For standalone use (if not using Catppuccin)
-# set -g status-right '#(~/.tmux/plugins/tmux-wax/tmux-wax.tmux print_module)'
-
-# For use with Catppuccin
-set -g @catppuccin_status_modules_right "... tmux-wax ..."
+```toml
+username = "your_ssh_username"
+password = "your_ssh_password"
+host = "your_remote_host"
+port = 22
 ```
 
-## Building
+Replace the values with your actual SSH credentials and remote host information.
 
-To build the Rust binary, navigate to the plugin directory and run:
+## Usage
+
+To display Docker stats in the terminal:
 
 ```
-cargo build --release
+tmux-wax
 ```
 
-## Compatibility
+To output Docker stats for TMUX status bar:
 
-This plugin is compatible with Catppuccin tmux theme and can be used as a Catppuccin module.
+```
+tmux-wax --tmux
+```
 
-## Troubleshooting
+## TMUX Integration
 
-If the icon or number isn't displaying correctly, try these steps:
+To integrate with TMUX, add the following line to your `.tmux.conf` file:
 
-1. Ensure the Rust binary is built: `cd ~/.tmux/plugins/tmux-wax && cargo build --release`
-2. Reload tmux config: `tmux source-file ~/.tmux.conf`
-3. Check tmux options: `tmux show-options -g | grep wax`
+```
+set -g status-right '#(tmux-wax --tmux)'
+```
 
-If issues persist, please open an issue on the GitHub repository.
+## Security Considerations
+
+- The application uses SSH for secure communication with the remote server.
+- Credentials are stored in a separate configuration file for better security management.
+- The SSH2 crate is used with the `vendored-openssl` feature to ensure a consistent and up-to-date OpenSSL implementation.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
