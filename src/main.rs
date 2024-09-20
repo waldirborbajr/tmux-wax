@@ -78,7 +78,10 @@ fn get_docker_stats(config: &Config) -> Result<(usize, usize, usize, usize)> {
 }
 
 fn format_for_tmux(stats: &(usize, usize, usize, usize)) -> String {
-    format!("🐳 T:{} U:{} D:{} F:{}", stats.0, stats.1, stats.2, stats.3)
+    format!(
+        "🐳 T:{} U:{} D:{} #[fg=red,bold]F:{}#[fg=default,nobold]",
+        stats.0, stats.1, stats.2, stats.3
+    )
 }
 
 fn format_for_prompt(stats: &(usize, usize, usize, usize)) -> String {
