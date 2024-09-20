@@ -21,7 +21,7 @@ set_tmux_option() {
   tmux set-option -gq "$option" "$value"
 }
 
-print_random_number() {
+print_docker_status() {
   $CURRENT_DIR/bin/tmux-wax --tmux
 }
 
@@ -33,7 +33,7 @@ update_frequency() {
 print_module() {
   local icon="$(get_tmux_option "@catppuccin_tmux_wax_icon" "")"
   local color="$(get_tmux_option "@catppuccin_tmux_wax_color" "cyan")"
-  local text="$(print_random_number)"
+  local text="$(print_docker_status)"
 
   local module=""
   module+="#[fg=$color]"
