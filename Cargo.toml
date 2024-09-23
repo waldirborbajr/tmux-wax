@@ -9,7 +9,7 @@ description = "A Rust CLI that connects to a remote server via SSH and retrieves
 structopt = "0.3"
 ssh2 = { version = "0.9", features = ["vendored-openssl"] }
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
+toml = "0.8"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.9"
