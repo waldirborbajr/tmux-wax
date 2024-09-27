@@ -40,7 +40,7 @@ print_module() {
   if [[ -n "$icon" ]]; then
     module+="${icon} "
   fi
-  module+="WAX: $text"
+  module+="🐳 $text"
   module+="#[default]"
 
   echo "$module"
