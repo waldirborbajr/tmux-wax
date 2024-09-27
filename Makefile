@@ -13,5 +13,8 @@ install: build
 clean:
 	cargo clean
 
+test:
+	cargo test
+
 uninstall:
 	rm -rf ~/.tmux/plugins/tmux-wax/
