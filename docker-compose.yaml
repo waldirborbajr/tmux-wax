@@ -1,0 +1,11 @@
+services:
+  tmux-wax:
+    build: .
+    container_name: tmux-wax
+    ports:
+      - "8080:8080"
+    environment:
+      - RUST_LOG=info
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So the container can access Docker
+    restart: unless-stopped
