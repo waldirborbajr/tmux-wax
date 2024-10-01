@@ -25,7 +25,7 @@ pub struct Opt {
 pub fn main() -> Result<()> {
     env_logger::init();
     let opt = Opt::from_args();
-    let config = read_config().context("Failed to read config")?;
+    let config = read_config(".tmux-wax-env").context("Failed to read config")?;
 
     // Check if server or Docker is down before getting Docker stats
     if !check_server_status(&config) {
@@ -42,9 +42,9 @@ pub fn main() -> Result<()> {
     Ok(())
 }
 
-pub fn read_config() -> Result<Config> {
+pub fn read_config(config_file: &str) -> Result<Config> {
     let home = std::env::var("HOME").context("HOME environment variable not set")?;
-    let config_path = PathBuf::from(home).join(".tmux-wax-env");
+    let config_path = PathBuf::from(home).join(config_file);
     let config_str = fs::read_to_string(config_path).context("Failed to read config file")?;
     let config: Config = toml::from_str(&config_str).context("Failed to parse config file")?;
     Ok(config)
@@ -119,78 +119,30 @@ pub fn format_for_prompt(stats: &(usize, usize, usize, usize)) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use assert_cmd::Command;
-    use std::net::TcpListener;
-    use std::thread;
 
-    fn setup_server(port: u16) {
-        let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
-        thread::spawn(move || for _ in listener.incoming() {});
+    #[test]
+    fn test_read_config() {
+        // Prepare a mock configuration file
+        let config_content = r#"
+        username = "testuser"
+        password = "testpass"
+        host = "127.0.0.1"
+        port = 22
+        "#;
+        let home = std::env::var("HOME").unwrap();
+        let config_path = PathBuf::from(home).join(".tmux-wax-env.test");
+        fs::write(&config_path, config_content).unwrap();
+
+        // Attempt to read the config
+        let config = read_config(".tmux-wax-env.test").expect("Failed to read config");
+        assert_eq!(config.username, "testuser");
+        assert_eq!(config.password, "testpass");
+        assert_eq!(config.host, "127.0.0.1");
+        assert_eq!(config.port, 22);
+
+        // Clean up
+        fs::remove_file(config_path).unwrap();
     }
-
-    //#[test]
-    //fn test_read_config() {
-    //    // Prepare a mock configuration file
-    //    let config_content = r#"
-    //    username = "testuser"
-    //    password = "testpass"
-    //    host = "127.0.0.1"
-    //    port = 2222
-    //    "#;
-    //    let home = std::env::var("HOME").unwrap();
-    //    let config_path = PathBuf::from(home).join(".tmux-wax-env.test");
-    //    fs::write(&config_path, config_content).unwrap();
-    //
-    //    // Attempt to read the config
-    //    let config = read_config().expect("Failed to read config");
-    //    assert_eq!(config.username, "testuser");
-    //    assert_eq!(config.password, "testpass");
-    //    assert_eq!(config.host, "127.0.0.1");
-    //    assert_eq!(config.port, 2222);
-    //
-    //    // Clean up
-    //    fs::remove_file(config_path).unwrap();
-    //}
-    //
-    //#[test]
-    //fn test_check_server_status() {
-    //    setup_server(2222);
-    //    let config = Config {
-    //        username: "testuser".to_string(),
-    //        password: "testpass".to_string(),
-    //        host: "127.0.0.1".to_string(),
-    //        port: 2222,
-    //    };
-    //    assert!(check_server_status(&config));
-    //}
-    //
-    //#[test]
-    //fn test_display_server_down_message() {
-    //    // Test the non-tmux output case
-    //    let mut cmd = Command::cargo_bin("tmux-wax").unwrap();
-    //    cmd.arg("--tmux=false")
-    //        .assert()
-    //        .stdout(predicates::str::contains(
-    //            "\x1b[31;1m🔴 Server or container is down\x1b[0m",
-    //        ));
-    //}
-    //
-    //#[test]
-    //fn test_get_docker_stats() {
-    //    // Simulate a Docker server that returns known output
-    //    setup_server(2222);
-    //    let config = Config {
-    //        username: "testuser".to_string(),
-    //        password: "testpass".to_string(),
-    //        host: "127.0.0.1".to_string(),
-    //        port: 2222,
-    //    };
-    //
-    //    // Assuming the command would return known states, we could mock the output
-    //    // This test should ideally involve mocking the Session and Channel.
-    //    let result = get_docker_stats(&config);
-    //    assert!(result.is_ok());
-    //}
 
     #[test]
     fn test_format_for_tmux() {
