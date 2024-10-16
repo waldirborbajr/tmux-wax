@@ -22,16 +22,12 @@ predicates = "3.1"
 
 
 [profile.release]
-opt-level = 3
+opt-level = "z"
 lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
 overflow-checks = true
-
-[profile.release.package."*"]
-opt-level = 3
-codegen-units = 1
 
 [features]
 default = ["std", "ssh2/vendored-openssl"]
